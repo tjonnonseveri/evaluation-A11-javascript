@@ -1,27 +1,27 @@
-Name : Testinette's Execution with Vitest
- on :
- push :
+name: Running Testinette using Vitest
+on:
+  push:
 
- permissions :
- content : writing
+permissions:
+  contents: write
 
- jobs :
- execute-testinette :
- Works on : ubuntu-latest
- container :
- image : ghcr.io/ghcr.io/edenschoolfrance/exam_a1-1javascript:latest
- Identification information :
- username : ${{  github  .  actor  }}
- Password : ${{  secrets  .  github_token  }}
- volumes :
- - ${{ github . workspace }} :/app/src
- options : --cpus 1
- steps :
-- Name : Consult the repository
- Uses : actions/checkout@v4
-- Name : Remove optional export keyword
- exécuter : sed -i 's/export function/function/g' /app/src/*
-- Name : Add an export keyword
- exécuter : sed -i 's/function/export function/g' /app/src/*
-- Name : Test in progress
- Run : cd /app && npm run test
+jobs:
+  run-testinette:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ghcr.io/edenschoolfrance/exam_a1-1javascript:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.github_token }}
+      volumes:
+        - ${{ github.workspace }}:/app/src
+      options: --cpus 1
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Remove optional export keyword
+        run: sed -i 's/export function/function/g' /app/src/*
+      - name: Add export keyword
+        run: sed -i 's/function/export function/g' /app/src/*
+      - name: Running testinette
+        run: cd /app && npm run test
